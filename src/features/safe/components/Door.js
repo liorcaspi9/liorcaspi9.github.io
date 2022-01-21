@@ -5,8 +5,6 @@ function Door({ closed = true }) {
         <div className={`door-Wrapper  ${!closed ? "open" : ""}`}>
             <div className="face front">
                 <div className="door-handle">
-                    <div className="handle-cover">
-                    </div>
                 </div>
             </div>
             <div className="face back">
