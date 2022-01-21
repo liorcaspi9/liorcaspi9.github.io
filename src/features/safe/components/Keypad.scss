@@ -1,0 +1,22 @@
+.keypad-wrapper {
+    grid-template-columns: 50px 50px 50px;
+    grid-column-gap: 20px;
+    grid-row-gap: 20px;
+    display: grid;
+    border: 3px solid #585454;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: inset black 3px 3px 9px 0px;
+    justify-content: center;
+    background-color: oldlace;
+    button {
+        border-radius: 10px;
+        height: 40px;
+        box-shadow: inset black 3px 2px 9px 0px;
+        font-size: 1.5em;
+        &:active {
+            box-shadow: inset black 3px -1px 20px 2px;
+            background-color: #ff0000;
+        }
+    }
+}

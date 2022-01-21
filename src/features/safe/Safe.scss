@@ -1,0 +1,28 @@
+.safe-wrapper {
+    position: relative;
+    display: flex;
+    padding: 40px;
+    margin: auto;
+    width: 730px;
+    justify-self: center;
+    border: 1px solid black;
+    gap: 20px;
+    border-radius: 5px;
+    box-shadow: inset black 0px 0px 20px 5px;
+    background-size: 20px 20px;
+    .content {
+        background-color: black;
+        width: 460px;
+        height: 343px;
+        position: absolute;
+        top: 42px;
+        border-radius: 2px;
+        box-shadow: inset 0px 0px 11px 9px grey;
+    }
+    .user-interface-wrapper {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        gap: 20px;
+    }
+}
