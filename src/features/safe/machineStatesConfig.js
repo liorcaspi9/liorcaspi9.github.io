@@ -11,7 +11,7 @@ export const stateNames = {
     open: 'open',
 }
 
-export function initStatesForFsm(setDoorIsClosed, setEnteredCode, errorSound, openSound, reset, disableTemporarely) {
+export function initStatesForFsm(setDoorIsClosed, setEnteredCode, sounds, reset, disableTemporarely) {
     const initialMachineValue = { locked: true, code: '' };
 
     const states = {
@@ -20,11 +20,10 @@ export function initStatesForFsm(setDoorIsClosed, setEnteredCode, errorSound, op
             value: initialMachineValue,
             enter: (currentState) => {
                 currentState.value = initialMachineValue;
-                setSafeStateFromMachineState(states[stateNames.initial]);
+                setSafeStateFromMachineState(currentState.value);
             },
             transition: (currentState, value) => {
-                states[stateNames.oneDigit].value = { locked: true, code: value };
-                return states[stateNames.oneDigit];
+                return decideDirectionToGo(value, currentState, states[stateNames.initial], states[stateNames.oneDigit]);
             }
         }),
         [stateNames.oneDigit]: new State({
@@ -58,7 +57,7 @@ export function initStatesForFsm(setDoorIsClosed, setEnteredCode, errorSound, op
             value: null,
             enter: (currentState) => {
                 currentState.value.code = '****';
-                errorSound?.play();
+                sounds.errorSound?.play();
                 setSafeStateFromMachineState(currentState.value);
                 reset();
             },
@@ -71,7 +70,7 @@ export function initStatesForFsm(setDoorIsClosed, setEnteredCode, errorSound, op
             value: { locked: false, code: 'open' },
             enter: (currentState) => {
                 currentState.value = { locked: true, code: 'open' };
-                openSound?.play();
+                sounds.unlockSound?.play();
                 disableTemporarely();
                 setSafeStateFromMachineState(currentState.value);
             },
@@ -88,10 +87,9 @@ export function initStatesForFsm(setDoorIsClosed, setEnteredCode, errorSound, op
             value: { locked: false, code: 'open' },
             enter: (currentState) => {
                 disableTemporarely();
+                sounds.openSound?.play();
                 currentState.value = { locked: false, code: 'open' };
                 setSafeStateFromMachineState(currentState.value);
-                console.log("open!");
-                // reset();
             },
             transition: (currentState, value) => {
                 return states[stateNames.initial];

@@ -6,15 +6,29 @@
     background-color: silver;
     transform-origin: left;
     transform-style: preserve-3d;
-    transition: all 0.5s ease-in-out;
+    transition: all 1.8s ease-in-out;
+    .door-handle {
+        z-index: 3;
+        display: inline-block;
+        top: calc(50% - 25px);
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        background-color: silver;
+        position: absolute;
+        border-radius: 50%;
+        box-shadow: inset black -2px -3px 0px 1px, inset black 3px 2px 5px 4px;
+        transform-style: preserve-3d;
+    }
+    &.open {
+        transform: perspective(1200px) translateZ(0px) translateX(0px) translateY(0px) rotateY(-105deg);
+        .door-handle {}
+    }
     .face {
         background-color: silver;
         border: 1px solid black;
         position: absolute;
         // backface-visibility: hidden;
-    }
-    &.open {
-        transform: perspective(1200px) translateZ(0px) translateX(0px) translateY(0px) rotateY(-105deg);
     }
     .front,
     .back {
@@ -32,13 +46,10 @@
         height: 320px;
         width: 427px;
     }
-    .right,
-    .left {
+    .right {
         width: 50px;
         height: 320px;
         top: 10px;
-    }
-    .right {
         transform: rotateY(90deg) translateZ(430px) translateX(27px);
         .lock-bar {
             background-color: #dfe6e6;
@@ -53,23 +64,5 @@
                 top: calc(50% - 70px);
             }
         }
-    }
-    .top,
-    .bottom {
-        width: 100%;
-        height: 20px;
-    }
-    .bottom {
-        bottom: 0;
-    }
-    .door-handle {
-        top: calc(50% - 25px);
-        right: 20px;
-        width: 50px;
-        height: 50px;
-        background-color: silver;
-        position: absolute;
-        border-radius: 50%;
-        box-shadow: black -5px -2px 2px 1px, inset black 4px 1px 12px 3px;
     }
 }

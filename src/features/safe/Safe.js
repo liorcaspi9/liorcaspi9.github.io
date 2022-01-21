@@ -7,7 +7,7 @@ import Door from './components/Door';
 import Keypad from './components/Keypad';
 import Screen from './components/Screen';
 import { initStatesForFsm, stateNames } from './machineStatesConfig';
-import { BUTTON_VALUES, BUTTONS_SOUND_PATH, ERROR_SOUND_PATH, OPEN_SOUND_PATH } from './safeConsts';
+import { BUTTON_VALUES, BUTTONS_SOUND_PATH, ERROR_SOUND_PATH, UNLOCK_SOUND_PATH, OPEN_SOUND_PATH } from './safeConsts';
 
 
 function Safe() {
@@ -19,8 +19,11 @@ function Safe() {
     const buttonsSound = new Audio(BUTTONS_SOUND_PATH);
 
     useEffect(() => {
-        const errorSound = new Audio(ERROR_SOUND_PATH);
-        const openSound = new Audio(OPEN_SOUND_PATH);
+        const sounds = {
+            errorSound: new Audio(ERROR_SOUND_PATH),
+            unlockSound: new Audio(UNLOCK_SOUND_PATH),
+            openSound: new Audio(OPEN_SOUND_PATH)
+        }
 
         const reset = () => {
             disableTemporarely(currentFsm.transition, '');
@@ -37,7 +40,7 @@ function Safe() {
         }
 
         let currentFsm;
-        const states = initStatesForFsm(setDoorIsClosed, setEnteredCode, errorSound, openSound, reset, disableTemporarely)
+        const states = initStatesForFsm(setDoorIsClosed, setEnteredCode, sounds, reset, disableTemporarely)
         currentFsm = new Fsm(stateNames.initial, states);
         setFsm(currentFsm);
     }, []);

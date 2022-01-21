@@ -18,5 +18,9 @@
             box-shadow: inset black 3px -1px 20px 2px;
             background-color: #ff0000;
         }
+        &:disabled {
+            background-color: #9c9c9c;
+            box-shadow: inset black -1px 1px 2px 1px;
+        }
     }
 }
