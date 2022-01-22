@@ -3,8 +3,6 @@ import { State } from './state';
 export * from "./state";
 
 /**
- *
- *
  * @export
  * @class Fsm
  */

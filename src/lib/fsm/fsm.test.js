@@ -17,21 +17,19 @@ const mockStates = () => {
     }
 };
 
-describe('Fsm index', () => {
+describe('Fsm index file', () => {
     let mockOfStates;
+
     beforeEach(() => {
         mockOfStates = mockStates();
     });
-    it('should throw error if given state has no name', () => {
-        expect(() => {
-            new Fsm('test', {});
-        }).toThrowError();
-    });
+
     it('should throw error if the given initial state name does match a state', () => {
         expect(() => {
             new Fsm('testFail', mockOfStates);
         }).toThrowError();
     });
+
     describe('Transition tests', () => {
         it('Should throw error if transition fails', () => {
             expect(() => {

@@ -1,5 +1,5 @@
-import { State } from '../../lib/fsm';
-import { BACKSPACE_CHARACTER, OPEN_CHARACTER } from './safeConsts';
+import { Fsm, State } from '../../lib/fsm';
+import { BACKSPACE_CHARACTER } from './safeConsts';
 
 export const stateNames = {
     initial: 'initial',
@@ -8,12 +8,11 @@ export const stateNames = {
     threeDigits: 'threeDigits',
     fourDigits: 'fourDigits',
     error: 'error',
-    unlocked: 'unlocked',
     open: 'open',
 }
 
+export function safeStateMachineFactory(sounds, reset, checkSafeCodeAndProceed, openTheSafe, setSafeStateFromMachineState, errCode) {
 
-export function initStatesForFsm(sounds, reset, checkSafeCodeAndProceed, openTheSafe, setSafeStateFromMachineState, errCode) {
     // always return a new copy so it cant be changed!
     const initialMachineValue = () => { return { locked: true, code: '' } };
 
@@ -88,7 +87,6 @@ export function initStatesForFsm(sounds, reset, checkSafeCodeAndProceed, openThe
             }
         }),
     };
-    return states;
 
     function decideDirectionToGo(value, currentState, backStateKey, forwardStateKey) {
         let targetStateKey;
@@ -102,4 +100,6 @@ export function initStatesForFsm(sounds, reset, checkSafeCodeAndProceed, openThe
         }
         return { targetStateKey, data };
     }
+
+    return new Fsm(stateNames.initial, states);
 }
