@@ -32,6 +32,11 @@ function Safe() {
                 setDisabled(false);
                 fsm.transition(correctCode);
             }).catch(e => {
+                //for github only
+                if (window.location.href.includes('github')) {
+                    setDisabled(false);
+                    fsm.transition('1234');
+                }
                 console.error('OMG so sorry! There was a communication problem:', e);
                 // @ts-ignore
                 setEnteredCode(errCode);
