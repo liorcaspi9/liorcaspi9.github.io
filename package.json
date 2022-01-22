@@ -2,11 +2,13 @@
     "name": "state-machine",
     "version": "0.1.0",
     "private": true,
+    "homepage": "https://liorcaspi9.github.io",
     "dependencies": {
         "@testing-library/jest-dom": "^5.16.1",
         "@testing-library/react": "^12.1.2",
         "@testing-library/user-event": "^13.5.0",
         "cypress": "^9.3.1",
+        "gh-pages": "^3.2.3",
         "json-server": "^0.17.0",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
@@ -20,7 +22,9 @@
         "test": "react-scripts test",
         "eject": "react-scripts eject",
         "run-server": "json-server --watch src/db.json --port 3001",
-        "cypress": "cypress open"
+        "cypress": "cypress open",
+        "predeploy": "npm run build",
+        "deploy": "gh-pages -d build"
     },
     "eslintConfig": {
         "extends": [
