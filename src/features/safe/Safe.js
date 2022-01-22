@@ -2,7 +2,7 @@ import './Safe.scss';
 
 import { useEffect, useState } from 'react';
 
-import { Fsm } from '../../lib';
+import { Fsm } from '../../lib/fsm';
 import Door from './components/Door';
 import Keypad from './components/Keypad';
 import Screen from './components/Screen';
@@ -50,14 +50,14 @@ function Safe() {
     }
 
     return (
-        <div className="safe-wrapper">
+        <main className="safe-wrapper">
             <div className='content'></div>
             <Door closed={doorIsClosed} />
             <div className="user-interface-wrapper">
                 <Screen digits={enteredCode} />
                 <Keypad buttonValues={BUTTON_VALUES} disabled={disabled} onButtonClick={(value) => buttonClickedHandler(value)} audio={buttonsSound} />
             </div>
-        </div>
+        </main>
     );
 }
 

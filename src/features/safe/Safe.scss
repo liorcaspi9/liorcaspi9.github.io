@@ -1,15 +1,19 @@
+@import "../../variables";
 .safe-wrapper {
+    $width: 730px;
     position: relative;
     display: flex;
     padding: 40px;
     margin: auto;
-    width: 730px;
+    width: $width;
+    min-width: $width;
+    height: 346px;
     justify-self: center;
     border: 1px solid black;
-    gap: 20px;
+    gap: $default-gap;
     border-radius: 5px;
     box-shadow: inset black 0px 0px 20px 5px;
-    background-color: #646464;
+    background-color: grey;
     .content {
         background-color: black;
         width: 460px;
@@ -23,6 +27,6 @@
         display: flex;
         flex-direction: column;
         flex: 1;
-        gap: 20px;
+        gap: $default-gap;
     }
 }

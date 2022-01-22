@@ -1,18 +1,19 @@
+@import "../../../_variables";
 .keypad-wrapper {
-    grid-template-columns: 50px 50px 50px;
-    grid-column-gap: 20px;
-    grid-row-gap: 20px;
+    grid-template-columns: 3em 3em 3em;
+    grid-column-gap: $default-gap;
+    grid-row-gap: $default-gap;
     display: grid;
-    border: 3px solid #585454;
     padding: 15px;
-    border-radius: 10px;
-    box-shadow: inset black 3px 3px 9px 0px;
+    border-radius: $border-radius;
+    box-shadow: $default-box-shadow;
     justify-content: center;
-    background-color: oldlace;
+    background-color: $interface-background-color;
     button {
-        border-radius: 10px;
-        height: 40px;
-        box-shadow: inset black 3px 2px 9px 0px;
+        border-color: #bbbbbb;
+        border-radius: $border-radius;
+        box-shadow: $default-box-shadow;
+        height: 1.6em;
         font-size: 1.5em;
         &:active {
             box-shadow: inset black 3px -1px 20px 2px;

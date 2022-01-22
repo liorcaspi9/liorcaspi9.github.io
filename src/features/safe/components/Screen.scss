@@ -1,12 +1,12 @@
-@use "../../../variables";
+@import "../../../variables";
 .screen-wrapper {
     display: flex;
     gap: 5px;
     position: relative;
-    border-radius: 10px;
-    box-shadow: inset black 3px 3px 9px 0px;
+    border-radius: $border-radius;
+    box-shadow: $default-box-shadow;
     padding: 10px;
-    background-color: oldlace;
+    background-color: $interface-background-color;
     .digit-wrapper {
         font-family: "digital-7", sans-serif;
         background-color: #000000;
