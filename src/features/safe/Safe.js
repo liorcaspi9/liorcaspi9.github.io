@@ -18,29 +18,83 @@ function Safe() {
 
     const buttonsSound = new Audio(BUTTONS_SOUND_PATH);
 
+    function reset() {
+        disableTemporarely(fsm.transition, '');
+    }
+
+    function disableTemporarely(callbackFunc, paramForFunc) {
+        setDisabled(true);
+        setTimeout(() => {
+            if (callbackFunc) {
+                callbackFunc(paramForFunc);
+            }
+            setDisabled(false);
+        }, 2000);
+    }
+
     useEffect(() => {
+        let currentFsm;
         const sounds = {
             errorSound: new Audio(ERROR_SOUND_PATH),
             unlockSound: new Audio(UNLOCK_SOUND_PATH),
             openSound: new Audio(OPEN_SOUND_PATH)
         }
+        const errCode = 'err1';
 
-        function reset() {
-            disableTemporarely(currentFsm.transition, '');
+        function setSafeStateFromMachineState(machineStateValue) {
+            setDoorIsClosed(machineStateValue.locked);
+            setEnteredCode(machineStateValue.code);
         }
 
-        function disableTemporarely(callbackFunc, paramForFunc) {
+        // function reset() {
+        //     disableTemporarely(currentFsm.transition, '');
+        // }
+
+        // function disableTemporarely(callbackFunc, paramForFunc) {
+        //     setDisabled(true);
+        //     setTimeout(() => {
+        //         if (callbackFunc) {
+        //             callbackFunc(paramForFunc);
+        //         }
+        //         setDisabled(false);
+        //     }, 2000);
+        // }
+
+        function checkSafeCodeAndProceed(code) {
             setDisabled(true);
+            fetch('http://localhost:3001/correctCode')
+                .then(response => response.json())
+                .then((data) => {
+                    const correctCode = data[0];
+                    setDisabled(false);
+                    currentFsm.transition(correctCode);
+                }).catch(e => {
+                    console.error('OMG so sorry! There was a communication problem:', e);
+                    // @ts-ignore
+                    setEnteredCode(errCode);
+                    setTimeout(() => {
+                        currentFsm.transition(errCode);
+                        setDisabled(false);
+                    }, 2000);
+                })
+        }
+
+        function openTheSafe(currentState) {
+            setEnteredCode(currentState.value.code);
+            sounds.unlockSound?.play();
+            disableTemporarely();
             setTimeout(() => {
-                if (callbackFunc) {
-                    callbackFunc(paramForFunc);
-                }
-                setDisabled(false);
+                setDoorIsClosed(currentState.value.locked);
+                sounds.openSound?.play();
             }, 2000);
         }
-
-        let currentFsm;
-        const states = initStatesForFsm(setDoorIsClosed, setEnteredCode, sounds, reset, disableTemporarely)
+        const states = initStatesForFsm(
+            sounds,
+            reset,
+            checkSafeCodeAndProceed,
+            openTheSafe,
+            setSafeStateFromMachineState,
+            errCode)
         currentFsm = new Fsm(stateNames.initial, states);
         setFsm(currentFsm);
     }, []);

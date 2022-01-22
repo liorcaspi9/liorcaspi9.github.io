@@ -6,14 +6,31 @@ export const stateNames = {
     oneDigit: 'oneDigit',
     twoDigits: 'twoDigits',
     threeDigits: 'threeDigits',
+    fourDigits: 'fourDigits',
     error: 'error',
     unlocked: 'unlocked',
     open: 'open',
 }
 
-export function initStatesForFsm(setDoorIsClosed, setEnteredCode, sounds, reset, disableTemporarely) {
+
+export function initStatesForFsm(sounds, reset, checkSafeCodeAndProceed, openTheSafe, setSafeStateFromMachineState, errCode) {
     // always return a new copy so it cant be changed!
     const initialMachineValue = () => { return { locked: true, code: '' } };
+
+    const digitStateFactory = (backStateKey, forwardStateKey) => {
+        return new State({
+            value: initialMachineValue(),
+            enter: (currentState, value) => {
+                if (value) {
+                    currentState.value = { locked: true, code: value };
+                }
+                setSafeStateFromMachineState(currentState.value);
+            },
+            transition: (currentState, value) => {
+                return decideDirectionToGo(value, currentState, backStateKey, forwardStateKey);
+            }
+        })
+    }
 
     const states = {
         [stateNames.initial]: new State({
@@ -26,43 +43,25 @@ export function initStatesForFsm(setDoorIsClosed, setEnteredCode, sounds, reset,
                 return decideDirectionToGo(value, currentState, stateNames.initial, stateNames.oneDigit);
             }
         }),
-        [stateNames.oneDigit]: new State({
-            value: initialMachineValue(),
-            enter: (currentState, value) => {
-                if (value) {
-                    currentState.value = { locked: true, code: value };
-                }
-                setSafeStateFromMachineState(currentState.value)
-            },
-            transition: (currentState, value) => {
-                return decideDirectionToGo(value, currentState, stateNames.initial, stateNames.twoDigits);
-            }
-        }),
-        [stateNames.twoDigits]: new State({
-            value: initialMachineValue(),
-            enter: (currentState, value) => {
-                if (value) {
-                    currentState.value = { locked: true, code: value };
-                }
-                setSafeStateFromMachineState(currentState.value)
-            },
-            transition: (currentState, value) => {
-                return decideDirectionToGo(value, currentState, stateNames.oneDigit, stateNames.threeDigits);
-            }
-        }),
-        [stateNames.threeDigits]: new State({
+        [stateNames.oneDigit]: digitStateFactory(stateNames.initial, stateNames.twoDigits),
+        [stateNames.twoDigits]: digitStateFactory(stateNames.oneDigit, stateNames.threeDigits),
+        [stateNames.threeDigits]: digitStateFactory(stateNames.twoDigits, stateNames.fourDigits),
+        [stateNames.fourDigits]: new State({
             value: initialMachineValue(),
             enter: (currentState, value) => {
                 currentState.value = { locked: true, code: value };
                 setSafeStateFromMachineState(currentState.value);
+                checkSafeCodeAndProceed(currentState.value.code);
             },
-            transition: (currentState, value) => {
-                const currentCode = currentState.value.code + value;
-
-                const correctCode = '1234'; //TODO: Getcode from 'server';
-
-                const targetStateKey = currentCode !== correctCode ? stateNames.error : stateNames.unlocked;
-                return decideDirectionToGo(value, currentState, stateNames.twoDigits, targetStateKey);
+            transition: (currentState, code) => {
+                let targetStateKey = '';
+                if (code === errCode) {
+                    targetStateKey = stateNames.initial;
+                }
+                else {
+                    targetStateKey = code === currentState.value.code ? stateNames.open : stateNames.error;
+                }
+                return decideDirectionToGo(code, currentState, stateNames.threeDigits, targetStateKey);
             }
         }),
         [stateNames.error]: new State({
@@ -77,41 +76,19 @@ export function initStatesForFsm(setDoorIsClosed, setEnteredCode, sounds, reset,
                 return { targetStateKey: stateNames.initial, data: value };
             }
         }),
-        [stateNames.unlocked]: new State({
-            value: { locked: false, code: 'open' },
-            enter: (currentState, value) => {
-                currentState.value = { locked: true, code: 'open' };
-                sounds.unlockSound?.play();
-                disableTemporarely();
-                setSafeStateFromMachineState(currentState.value);
-            },
-            transition: (currentState, value) => {
-                let targetState = stateNames.initial;
-                if (value === OPEN_CHARACTER) {
-                    targetState = stateNames.open;
-                }
-                return { targetStateKey: targetState, data: value };
-            }
-        }),
         [stateNames.open]: new State({
             value: { locked: false, code: 'open' },
             enter: (currentState, value) => {
-                disableTemporarely();
-                sounds.openSound?.play();
                 currentState.value = { locked: false, code: 'open' };
-                setSafeStateFromMachineState(currentState.value);
+                openTheSafe(currentState)
             },
             transition: (currentState, value) => {
+                sounds.openSound?.play();
                 return { targetStateKey: stateNames.initial, data: value };
             }
         }),
     };
     return states;
-
-    function setSafeStateFromMachineState(machineStateValue) {
-        setDoorIsClosed(machineStateValue.locked);
-        setEnteredCode(machineStateValue.code);
-    }
 
     function decideDirectionToGo(value, currentState, backStateKey, forwardStateKey) {
         let targetStateKey;
