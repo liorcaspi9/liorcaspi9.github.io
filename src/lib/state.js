@@ -15,7 +15,8 @@ export class State {
      * Creates an instance of State.
      * @param {Object} state
      * @param {string} state.name
-     * @param {function(State,*):State} state.transition - params are currentState and the value
+     * @param {function(State,*):State} state.transition - params are currentState and the value.
+     * returns the target state
      * @param {*} state.value
      * @param {function} [state.enter=() => { }]
      * @param {function} [state.leave=() => { }]

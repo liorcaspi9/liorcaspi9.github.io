@@ -11,7 +11,6 @@ export * from "./state";
 export class Fsm {
     _states;
     _currentState;
-    _initialStateKey;
 
     /**
      * Creates an instance of Fsm.
@@ -21,7 +20,6 @@ export class Fsm {
     constructor(initialStateKey, states) {
         this._states = states;
         this._currentState = states[initialStateKey];
-        this._initialStateKey = initialStateKey;
         this._currentState.enter(this._currentState);
     }
 

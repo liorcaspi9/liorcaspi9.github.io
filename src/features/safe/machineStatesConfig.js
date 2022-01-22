@@ -48,7 +48,10 @@ export function initStatesForFsm(setDoorIsClosed, setEnteredCode, sounds, reset,
             enter: (currentState) => { setSafeStateFromMachineState(currentState.value); },
             transition: (currentState, value) => {
                 const currentCode = currentState.value.code + value;
-                const targetState = currentCode !== '1234' ? states[stateNames.error] : states[stateNames.unlocked];
+
+                const correctCode = '1234'; //TODO: Getcode from 'server';
+
+                const targetState = currentCode !== correctCode ? states[stateNames.error] : states[stateNames.unlocked];
                 return decideDirectionToGo(value, currentState, states[stateNames.twoDigits], targetState);
             }
         }),

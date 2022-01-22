@@ -25,11 +25,11 @@ function Safe() {
             openSound: new Audio(OPEN_SOUND_PATH)
         }
 
-        const reset = () => {
+        function reset() {
             disableTemporarely(currentFsm.transition, '');
         }
 
-        const disableTemporarely = (callbackFunc, paramForFunc) => {
+        function disableTemporarely(callbackFunc, paramForFunc) {
             setDisabled(true);
             setTimeout(() => {
                 if (callbackFunc) {
