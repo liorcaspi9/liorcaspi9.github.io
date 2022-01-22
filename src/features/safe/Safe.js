@@ -32,18 +32,20 @@ function Safe() {
                 setDisabled(false);
                 fsm.transition(correctCode);
             }).catch(e => {
-                //for github only
+                //for github only- always succeed
                 if (window.location.href.includes('github')) {
                     setDisabled(false);
                     fsm.transition('1234');
                 }
-                console.error('OMG so sorry! There was a communication problem:', e);
-                // @ts-ignore
-                setEnteredCode(errCode);
-                setTimeout(() => {
-                    fsm.transition(errCode);
-                    setDisabled(false);
-                }, 2000);
+                else {
+                    console.error('OMG so sorry! There was a communication problem:', e);
+                    // @ts-ignore
+                    setEnteredCode(errCode);
+                    setTimeout(() => {
+                        fsm.transition(errCode);
+                        setDisabled(false);
+                    }, 2000);
+                }
             })
     }
 
