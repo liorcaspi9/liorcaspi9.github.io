@@ -1,21 +1,25 @@
 import { Fsm, State } from '../../lib/fsm';
-import { BACKSPACE_CHARACTER } from './safeConsts';
+import { BACKSPACE_CHARACTER, ERROR_TEXT, SOUNDS } from './safeConsts';
 
-export const stateNames = {
-    initial: 'initial',
-    oneDigit: 'oneDigit',
-    twoDigits: 'twoDigits',
-    threeDigits: 'threeDigits',
-    fourDigits: 'fourDigits',
-    error: 'error',
-    open: 'open',
-}
 
-export function safeStateMachineFactory(sounds, reset, checkSafeCodeAndProceed, openTheSafe, setSafeStateFromMachineState, errCode) {
+
+export function safeStateMachineFactory(reset, checkSafeCodeAndProceed, openTheSafe, setSafeStateFromMachineState) {
+
+    const stateNames = {
+        initial: 'initial',
+        oneDigit: 'oneDigit',
+        twoDigits: 'twoDigits',
+        threeDigits: 'threeDigits',
+        fourDigits: 'fourDigits',
+        error: 'error',
+        open: 'open',
+    }
 
     // always return a new copy so it cant be changed!
     const initialMachineValue = () => { return { locked: true, code: '' } };
 
+    // 'oneDigit' 'twoDigits' 'threeDigits' states have exactly the same logic so a factory is used here
+    // only 'backStateKey', 'forwardStateKey' differ in each instance
     const digitStateFactory = (backStateKey, forwardStateKey) => {
         return new State({
             value: initialMachineValue(),
@@ -54,7 +58,7 @@ export function safeStateMachineFactory(sounds, reset, checkSafeCodeAndProceed, 
             },
             transition: (currentState, code) => {
                 let targetStateKey = '';
-                if (code === errCode) {
+                if (code === ERROR_TEXT) {
                     targetStateKey = stateNames.initial;
                 }
                 else {
@@ -67,7 +71,7 @@ export function safeStateMachineFactory(sounds, reset, checkSafeCodeAndProceed, 
             value: initialMachineValue(),
             enter: (currentState, value) => {
                 currentState.value.code = '****';
-                sounds.errorSound?.play();
+                SOUNDS.ERROR_SOUND?.play();
                 setSafeStateFromMachineState(currentState.value);
                 reset();
             },
@@ -82,7 +86,7 @@ export function safeStateMachineFactory(sounds, reset, checkSafeCodeAndProceed, 
                 openTheSafe(currentState)
             },
             transition: (currentState, value) => {
-                sounds.openSound?.play();
+                SOUNDS.OPEN_SOUND?.play();
                 return { targetStateKey: stateNames.initial, data: value };
             }
         }),

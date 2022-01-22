@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import Door from './components/Door';
 import Keypad from './components/Keypad';
 import Screen from './components/Screen';
-import { BUTTON_VALUES, BUTTONS_SOUND_PATH, ERROR_SOUND_PATH, OPEN_SOUND_PATH, UNLOCK_SOUND_PATH } from './safeConsts';
+import { BUTTON_VALUES, ERROR_TEXT, SOUNDS } from './safeConsts';
 import { safeStateMachineFactory } from './safeStateMachineFactory';
 
 function Safe() {
@@ -14,14 +14,6 @@ function Safe() {
     const [disabled, setDisabled] = useState(false);
 
     let fsm;
-
-    const sounds = {
-        errorSound: new Audio(ERROR_SOUND_PATH),
-        unlockSound: new Audio(UNLOCK_SOUND_PATH),
-        openSound: new Audio(OPEN_SOUND_PATH),
-        buttonsSound: new Audio(BUTTONS_SOUND_PATH)
-    }
-    const errCode = 'err1';
 
     function checkSafeCodeAndProceed(code) {
         setDisabled(true);
@@ -40,9 +32,9 @@ function Safe() {
                 else {
                     console.error('OMG so sorry! There was a communication problem:', e);
                     // @ts-ignore
-                    setEnteredCode(errCode);
+                    setEnteredCode(ERROR_TEXT);
                     setTimeout(() => {
-                        fsm.transition(errCode);
+                        fsm.transition(ERROR_TEXT);
                         setDisabled(false);
                     }, 2000);
                 }
@@ -70,11 +62,11 @@ function Safe() {
 
     function openTheSafe(currentState) {
         setEnteredCode(currentState.value.code);
-        sounds.unlockSound?.play();
+        SOUNDS.UNLOCK_SOUND?.play();
         disableTemporarely();
         setTimeout(() => {
             setDoorIsClosed(currentState.value.locked);
-            sounds.openSound?.play();
+            SOUNDS.OPEN_SOUND?.play();
         }, 2000);
     }
 
@@ -84,12 +76,10 @@ function Safe() {
 
     fsm = useMemo(() => {
         return safeStateMachineFactory(
-            sounds,
             reset,
             checkSafeCodeAndProceed,
             openTheSafe,
-            setSafeStateFromMachineState,
-            errCode)
+            setSafeStateFromMachineState)
     }, []);
 
     return (
@@ -102,7 +92,7 @@ function Safe() {
                     buttonValues={BUTTON_VALUES}
                     disabled={disabled}
                     onButtonClick={(value) => buttonClickedHandler(value)}
-                    audio={sounds.buttonsSound} />
+                    audio={SOUNDS.BUTTONS_SOUND} />
             </div>
         </main>
     );
