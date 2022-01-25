@@ -24,14 +24,14 @@ describe('Fsm index file', () => {
         mockOfStates = mockStates();
     });
 
-    it('should throw error if the given initial state name does match a state', () => {
+    it('should throw an error if the given initial state name does not match a state', () => {
         expect(() => {
             new Fsm('testFail', mockOfStates);
         }).toThrowError();
     });
 
     describe('Transition tests', () => {
-        it('Should throw error if transition fails', () => {
+        it('Should throw an error if transition fails', () => {
             expect(() => {
                 mockOfStates['test'].transition = () => { throw new Error('bla') };
                 const fsm = new Fsm('test', mockOfStates);
